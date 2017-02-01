@@ -6,8 +6,11 @@
 
 'use strict';
 
-import { assign, clone, cloneDeep, filter, includes, intersection,
-         escapeRegExp, forOwn, has, keys, mapValues, merge, omit, reduce, some } from 'lodash';
+import {
+  assign, clone, cloneDeep, filter, includes, intersection,
+  isArray, isString, isUndefined, escapeRegExp, forOwn, has, keys,
+  mapValues, merge, omit, pick, reduce, some
+} from 'lodash';
 
 import { SerialOpts } from 'jsonapi-serializer';
 import { LinkOpts } from '../links';
@@ -138,7 +141,14 @@ function matches(matcher: AttrMatcher, str: string): boolean {
 function getAttrsList(data: Model, bookOpts: BookOpts): string[] {
   let attrs: string[] = keys(data.attributes);
 
-  let { attributes = { omit: [data.idAttribute]} }: BookOpts = bookOpts;
+  let idAttr: string | string[] = data.idAttribute;
+  if (isString(idAttr)) {
+    idAttr = [ idAttr ];
+  } else if (isUndefined(idAttr)) {
+    idAttr = [];
+  }
+
+  let { attributes = { omit: idAttr } }: BookOpts = bookOpts;
 
   // cast it to the object version of the option
   if (attributes instanceof Array) {
@@ -215,6 +225,12 @@ export function toJSON(data: Data): any {
 
   if (isModel(data)) {
     json = data.toJSON({shallow: true}); // serialize without the relations
+
+    // When idAttribute is a composite id, calling .id returns `undefined`
+    const idAttr: string | string[] = data.idAttribute;
+    if (isArray(idAttr)) {
+      data.id = JSON.stringify(pick(data.attributes, idAttr));
+    }
 
     // Assign the id for the model if it's not present already
     if (!has(json, 'id')) { json.id = data.id; }

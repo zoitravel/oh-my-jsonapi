@@ -1,6 +1,6 @@
 'use strict';
 
-import { assign, identity } from 'lodash';
+import { assign, identity, isArray, get, pick } from 'lodash';
 import { pluralize as plural } from 'inflection';
 import { SerialOpts, Serializer } from 'jsonapi-serializer';
 import { Mapper, MapOpts } from '../interfaces';
