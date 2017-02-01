@@ -419,8 +419,6 @@ describe('Bookshelf Adapter', () => {
 
     let expected: any = {
       data: {
-        id: '4',
-        type: 'models',
         attributes: {
           attr: 'value',
           paid: true
@@ -445,8 +443,6 @@ describe('Bookshelf Adapter', () => {
 
     let expected: any = {
       data: {
-        id: '4',
-        type: 'models',
         attributes: {
           attr: 'value',
           'not-to-omit': false,
@@ -472,8 +468,6 @@ describe('Bookshelf Adapter', () => {
 
     let expected: any = {
       data: {
-        id: 'email@example.com',
-        type: 'models',
         attributes: {
           email: 'email@example.com'
         }
@@ -498,8 +492,6 @@ describe('Bookshelf Adapter', () => {
 
     let expected: any = {
       data: {
-        id: '4',
-        type: 'models',
         attributes: {
           Attr: 'value',
           'related-id': 123
@@ -524,8 +516,6 @@ describe('Bookshelf Adapter', () => {
 
     let expected: any = {
       data: {
-        id: '4',
-        type: 'models',
         attributes: {
           id: '4',
           'another_id': '456',
