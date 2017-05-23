@@ -2,7 +2,8 @@
   "name": "jsonapi-mapper",
   "version": "1.0.0-beta.10",
   "description": "JSON API-Compliant Serialization for your ORM",
-  "main": "es5/src/mapper.js",
+  "main": "es5/src/index.js",
+  "types": "es5/src/index.d.ts",
   "scripts": {
     "prepublish": "tsc",
     "postinstall": "tsc",
@@ -38,24 +39,24 @@
   },
   "homepage": "https://github.com/scoutforpets/jsonapi-mapper",
   "dependencies": {
-    "@types/bookshelf": "0.8.35",
-    "@types/bluebird": "3.0.37",
-    "@types/inflection": "1.5.28",
-    "@types/jasmine": "2.5.41",
-    "@types/knex": "0.0.40",
-    "@types/lodash": "4.14.50",
-    "@types/node": "6.0.63",
-    "@types/qs": "6.2.30",
-    "inflection": "1.10.0",
-    "jsonapi-serializer": "3.4.2",
-    "lodash": "4.17.4",
-    "qs": "6.3.0",
-    "type-check": "0.3.2",
-    "typescript": "2.1.5"
+    "@types/bluebird": "^3.0.37",
+    "@types/bookshelf": "^0.8.35",
+    "@types/inflection": "^1.5.28",
+    "@types/jasmine": "^2.5.43",
+    "@types/knex": "0.0.52",
+    "@types/lodash": "^4.14.64",
+    "@types/node": "^6.0.63",
+    "@types/qs": "^6.2.30",
+    "inflection": "1.12.0",
+    "jsonapi-serializer": "^3.4.2",
+    "lodash": "^4.17.4",
+    "qs": "^6.3.1",
+    "type-check": "^0.3.2",
+    "typescript": "^2.3.3"
   },
   "devDependencies": {
-    "bookshelf": "0.10.3",
-    "jasmine": "2.5.3",
-    "knex": "0.11.10"
+    "bookshelf": "^0.10.3",
+    "jasmine": "^2.5.3",
+    "knex": "^0.12.7"
   }
 }

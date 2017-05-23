@@ -4,17 +4,14 @@
  * with the goal of simplifying the logic of the main 'map' method.
  */
 
-'use strict';
-
 import {
   assign, clone, cloneDeep, filter, includes, intersection,
   isArray, isString, isUndefined, escapeRegExp, forOwn, has, keys,
   mapValues, merge, omit, pick, reduce, some
 } from 'lodash';
 
-import { SerialOpts } from 'jsonapi-serializer';
-import { LinkOpts } from '../links';
-import { RelationOpts } from '../relations';
+import { LinkOpts, RelationOpts } from '../interfaces';
+import { SerialOpts } from '../serializer';
 import { AttrMatcher, AttributesOpt } from '../interfaces';
 import { topLinks, dataLinks, relationshipLinks, includedLinks } from './links';
 import { BookOpts, Data, Model, isModel, isCollection } from './extras';
@@ -99,7 +96,7 @@ interface Sample extends Model {
  */
 function sample(data: Data): Sample {
   if (isModel(data)) {
-    // override type because we will ovewrite relations
+    // override type because we will overwrite relations
     const sampled: Sample = omit<Sample, Model>(clone(data), ['relations', 'attributes']);
     sampled.attributes = cloneDeep(data.attributes);
     sampled.relations = mapValues(data.relations, sample);

@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import * as bs from 'bookshelf';
 import * as knex from 'knex';
 
-import * as Mapper from '../src/mapper';
+import * as Mapper from '../src';
 
 type Model = bs.Model<any>;
 type Collection = bs.Collection<any>;
@@ -15,7 +15,7 @@ describe('Bookshelf Adapter', () => {
   let domain: string = 'https://domain.com';
 
   beforeAll(() => {
-    bookshelf = bs(knex(({} as knex.Config)));
+    bookshelf = bs(knex(({ client: 'sqlite3', useNullAsDefault: true } as knex.Config)));
     mapper = new Mapper.Bookshelf(domain);
   });
 
@@ -698,7 +698,7 @@ describe('Bookshelf links', () => {
   let domain: string = 'https://domain.com';
 
   beforeAll(() => {
-    bookshelf = bs(knex(({} as knex.Config)));
+    bookshelf = bs(knex(({ client: 'sqlite3', useNullAsDefault: true } as knex.Config)));
     mapper = new Mapper.Bookshelf(domain);
   });
 
@@ -1144,7 +1144,7 @@ describe('Bookshelf relations', () => {
   let domain: string = 'https://domain.com';
 
   beforeAll(() => {
-    bookshelf = bs(knex(({} as knex.Config)));
+    bookshelf = bs(knex(({ client: 'sqlite3', useNullAsDefault: true } as knex.Config)));
     mapper = new Mapper.Bookshelf(domain);
   });
 
@@ -1988,7 +1988,7 @@ describe('Serializer options', () => {
   let domain: string = 'https://domain.com';
 
   beforeAll(() => {
-    bookshelf = bs(knex(({} as knex.Config)));
+    bookshelf = bs(knex(({ client: 'sqlite3', useNullAsDefault: true } as knex.Config)));
   });
 
   it('should not overwrite typeForAttribute function passed to serializer', () => {
@@ -2046,7 +2046,7 @@ describe('Plugins', () => {
   let domain: string = 'https://domain.com';
 
   beforeAll(() => {
-    bookshelf = bs(knex(({} as knex.Config)));
+    bookshelf = bs(knex(({ client: 'sqlite3', useNullAsDefault: true } as knex.Config)));
     bookshelf.plugin('visibility');
     mapper = new Mapper.Bookshelf(domain);
   });
@@ -2172,7 +2172,7 @@ describe('Issues', () => {
   let domain: string = 'https://domain.com';
 
   beforeAll(() => {
-    bookshelf = bs(knex(({} as knex.Config)));
+    bookshelf = bs(knex(({ client: 'sqlite3', useNullAsDefault: true } as knex.Config)));
     mapper = new Mapper.Bookshelf(domain);
   });
 
