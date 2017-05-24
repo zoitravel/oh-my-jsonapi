@@ -6,6 +6,7 @@
   "types": "es5/src/index.d.ts",
   "scripts": {
     "prepublish": "tsc",
+    "postinstall": "tsc",
     "pretest": "tsc",
     "test": "jasmine",
     "tsc": "tsc"
@@ -37,26 +38,25 @@
     "url": "https://github.com/scoutforpets/jsonapi-mapper/issues"
   },
   "homepage": "https://github.com/scoutforpets/jsonapi-mapper",
-  "files": [
-    "es5"
-  ],
   "dependencies": {
+    "@types/bluebird": "^3.0.37",
     "@types/bookshelf": "^0.8.35",
-    "inflection": "1.12.0",
-    "jsonapi-serializer": "^3.3.0",
-    "lodash": "^4.17.4",
-    "qs": "^6.3.1",
-    "type-check": "^0.3.2"
-  },
-  "devDependencies": {
     "@types/inflection": "^1.5.28",
     "@types/jasmine": "^2.5.43",
-    "@types/knex": "0.0.41",
+    "@types/knex": "0.0.52",
     "@types/lodash": "^4.14.64",
+    "@types/node": "^6.0.63",
     "@types/qs": "^6.2.30",
+    "inflection": "1.12.0",
+    "jsonapi-serializer": "^3.4.2",
+    "lodash": "^4.17.4",
+    "qs": "^6.3.1",
+    "type-check": "^0.3.2",
+    "typescript": "^2.3.3"
+  },
+  "devDependencies": {
     "bookshelf": "^0.10.3",
     "jasmine": "^2.5.3",
-    "knex": "^0.12.7",
-    "typescript": "^2.3.3"
+    "knex": "^0.12.7"
   }
 }

@@ -73,6 +73,34 @@ describe('Bookshelf Adapter', () => {
     expect(_.matches(expected)(result)).toBe(true);
   });
 
+  it('should serialize a basic model with custom array of id attributes', () => {
+    let customModel: any = bookshelf.Model.extend<any>({
+      idAttribute : ['email', 'name']
+    });
+
+    let model: any = customModel.forge({
+      email : 'foo@example.com',
+      name: 'A test model',
+      description: 'something to use as a test'
+    });
+
+    let result: any = mapper.map(model, 'models');
+
+    let expected: any = {
+      data: {
+        id: {
+          email: 'foo@example.com',
+          name: 'A test model'
+        },
+        type: 'models',
+        attributes: {
+          description: 'something to use as a test'
+        }
+      }
+    };
+    expect(_.matches(expected)(result)).toBe(true);
+  });
+
   it('should serialize related model with custom id attribute in relationships object', () => {
 
     let customModel: any = bookshelf.Model.extend<any>({
@@ -322,7 +350,7 @@ describe('Bookshelf Adapter', () => {
     expect(_.matches(expected)(result2)).toBe(true);
   });
 
-  it('should omit the model idAttribute from the attributes', () => {
+  it('should omit the model idAttribute from the attributes by default', () => {
     let customModel: any = bookshelf.Model.extend<any>({
       idAttribute : 'email'
     });
@@ -350,6 +378,33 @@ describe('Bookshelf Adapter', () => {
     expect(_.has(result.data.attributes, 'email')).toBe(false);
   });
 
+  it('should omit the model idAttribute from the attributes by default with array idAttribute', () => {
+    let customModel: any = bookshelf.Model.extend<any>({
+      idAttribute : ['email', 'name']
+    });
+
+    let model: any = customModel.forge({
+      email : 'foo@example.com',
+      name : 'A test model',
+      description: 'something to use as a test'
+    });
+
+    let result: any = mapper.map(model, 'models');
+
+    let expected: any = {
+      data: {
+        type: 'models',
+        attributes: {
+          description: 'something to use as a test'
+        }
+      }
+    };
+
+    expect(_.matches(expected)(result)).toBe(true);
+    expect(_.has(result.data.attributes, 'email')).toBe(false);
+    expect(_.has(result.data.attributes, 'name')).toBe(false);
+  });
+
   it('should omit attributes that match regexes passed by the user', () => {
     let model: Model = bookshelf.Model.forge<any>({
       id: '4',
@@ -360,12 +415,10 @@ describe('Bookshelf Adapter', () => {
       'someId': '890'
     });
 
-    let result: any = mapper.map(model, 'models', { omitAttrs: [/^id$/, /[_-]id$/, /Id$/] });
+    let result: any = mapper.map(model, 'models', { attributes: { omit: [/^id$/, /[_-]id$/, /Id$/] }});
 
     let expected: any = {
       data: {
-        id: '4',
-        type: 'models',
         attributes: {
           attr: 'value',
           paid: true
@@ -386,12 +439,10 @@ describe('Bookshelf Adapter', () => {
       ids : [4, 5, 6]
     });
 
-    let result: any = mapper.map(model, 'models', { omitAttrs: ['id', 'to-omit'] });
+    let result: any = mapper.map(model, 'models', { attributes: { omit: ['id', 'to-omit'] } });
 
     let expected: any = {
       data: {
-        id: '4',
-        type: 'models',
         attributes: {
           attr: 'value',
           'not-to-omit': false,
@@ -413,13 +464,10 @@ describe('Bookshelf Adapter', () => {
       email: 'email@example.com'
     });
 
-    let result1: any = mapper.map(model, 'models', { omitAttrs: [] });
-    let result2: any = mapper.map(model, 'models', { omitAttrs: null });
+    let result1: any = mapper.map(model, 'models', { attributes: { omit: [] } });
 
     let expected: any = {
       data: {
-        id: 'email@example.com',
-        type: 'models',
         attributes: {
           email: 'email@example.com'
         }
@@ -427,9 +475,112 @@ describe('Bookshelf Adapter', () => {
     };
 
     expect(_.isMatch(result1, expected)).toBe(true);
-    expect(_.isMatch(result2, expected)).toBe(true);
     expect(_.isEqual(result1.data.attributes, expected.data.attributes)).toBe(true);
-    expect(_.isEqual(result2.data.attributes, expected.data.attributes)).toBe(true);
+  });
+
+  it('should only include attributes that match regexes passed by the user', () => {
+    let model: Model = bookshelf.Model.forge<any>({
+      id: '4',
+      Attr: 'value',
+      paid: true,
+      'related-id': 123,
+      'another_id': '456',
+      'someId': '890'
+    });
+
+    let result: any = mapper.map(model, 'models', { attributes: { include: [ /.*at.*/i ] } });
+
+    let expected: any = {
+      data: {
+        attributes: {
+          Attr: 'value',
+          'related-id': 123
+        }
+      }
+    };
+
+    expect(_.matches(expected)(result)).toBe(true);
+    expect(_.isEqual(result.data.attributes, expected.data.attributes)).toBe(true);
+  });
+
+  it('should give more precedence to omit than include option for attributes', () => {
+    let model: Model = bookshelf.Model.forge<any>({
+      id: '4',
+      Attr: 'value',
+      'related-id': 123,
+      'another_id': '456',
+      'someId': '890'
+    });
+
+    let result: any = mapper.map(model, 'models', { attributes: { omit: [ 'related-id' ], include: [ /id/i ] } });
+
+    let expected: any = {
+      data: {
+        attributes: {
+          id: '4',
+          'another_id': '456',
+          'someId': '890'
+        }
+      }
+    };
+
+    expect(_.matches(expected)(result)).toBe(true);
+    expect(_.isEqual(result.data.attributes, expected.data.attributes)).toBe(true);
+  });
+
+  it('passing attributes an array should be used as include the property', () => {
+    let model: Model = bookshelf.Model.forge<any>({
+      id: '4',
+      Attr: 'value',
+      'related-id': 123,
+      'another_id': '456',
+      'someId': '890'
+    });
+
+    let result: any = mapper.map(model, 'models', { attributes: [ /id/i ] });
+
+    let expected: any = {
+      data: {
+        id: '4',
+        type: 'models',
+        attributes: {
+          id: '4',
+          'related-id': 123,
+          'another_id': '456',
+          'someId': '890'
+        }
+      }
+    };
+
+    expect(_.matches(expected)(result)).toBe(true);
+    expect(_.isEqual(result.data.attributes, expected.data.attributes)).toBe(true);
+  });
+
+  it('should only include attributes that exactly equal strings passed by the user', () => {
+    let model: Model = bookshelf.Model.forge<any>({
+      id: '4',
+      attr: 'value',
+      paid: true,
+      'related-id': 123,
+      'another_id': '456',
+      'someId': '890'
+    });
+
+    let result: any = mapper.map(model, 'models', { attributes: [ 'attr', 'paid' ] });
+
+    let expected: any = {
+      data: {
+        id: '4',
+        type: 'models',
+        attributes: {
+          attr: 'value',
+          paid: true
+        }
+      }
+    };
+
+    expect(_.matches(expected)(result)).toBe(true);
+    expect(_.isEqual(result.data.attributes, expected.data.attributes)).toBe(true);
   });
 
   it('should serialize an empty collection', () => {
@@ -1309,6 +1460,68 @@ describe('Bookshelf relations', () => {
                 }
             }
         }
+    };
+
+    expect(_.matches(expected)(result)).toBe(true);
+
+  });
+
+  it('should support including nested relationships', () => {
+
+    let customModel: any = bookshelf.Model.extend<any>({
+      idAttribute : ['id1', 'id2']
+    });
+
+    let model1: Model = bookshelf.Model.forge<any>({id: '5', attr: 'value'});
+    let model2: Model = bookshelf.Model.forge<any>({id: '6', attr: 'value'});
+    let model3: Model = customModel.forge({id1: '7', id2: '8', attr: 'value'});
+
+    (model1 as any).relations['related-model'] = model2;
+    (model2 as any).relations['nested-related-model'] = model3;
+
+    let result: any = mapper.map(model1, 'models');
+
+    let expected: any = {
+      included: [
+        {
+          id: '6',
+          type: 'related-models',
+          attributes: {
+            attr: 'value'
+          },
+          relationships: {
+              'nested-related-model': {
+                  data: {
+                      type: 'nested-related-models',
+                      id: {
+                        id1: '7',
+                        id2: '8'
+                      }
+                  }
+              }
+          }
+        },
+        {
+          id: {
+            id1: '7',
+            id2: '8'
+          },
+          type: 'nested-related-models',
+          attributes: {
+            attr: 'value'
+          }
+        }
+      ],
+      data: {
+          relationships: {
+              'related-model': {
+                  data: {
+                      type: 'related-models',
+                      id: '6'
+                  }
+              }
+          }
+      }
     };
 
     expect(_.matches(expected)(result)).toBe(true);
