@@ -9,6 +9,7 @@
     "build": "tsc -p tsconfig.publish.json",
     "prepublish": "npm run build",
     "pretest": "npm run build -- -p tsconfig.test.json",
+    "postinstall": "npm run build",
     "test": "jasmine"
   },
   "repository": {
@@ -43,6 +44,11 @@
   ],
   "dependencies": {
     "@types/bookshelf": "^0.8.35",
+    "@types/inflection": "^1.5.28",
+    "@types/jasmine": "^2.5.43",
+    "@types/knex": "0.0.41",
+    "@types/lodash": "^4.14.64",
+    "@types/qs": "^6.2.30",
     "inflection": "1.12.0",
     "jsonapi-serializer": "^3.3.0",
     "lodash": "^4.17.4",
@@ -50,11 +56,6 @@
     "type-check": "^0.3.2"
   },
   "devDependencies": {
-    "@types/inflection": "^1.5.28",
-    "@types/jasmine": "^2.5.43",
-    "@types/knex": "0.0.41",
-    "@types/lodash": "^4.14.64",
-    "@types/qs": "^6.2.30",
     "bookshelf": "^0.10.3",
     "jasmine": "^2.5.3",
     "knex": "^0.12.7",
